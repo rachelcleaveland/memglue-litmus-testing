@@ -19,6 +19,7 @@ echo "Executing all tests in ${PATHTOLITMUSTESTS}"
 if [ "$1" = "all" ]; then
   echo "Running all tests in $PATHTOLITMUSTESTS"
   mkdir -p $PATHTOMEMGLUEOUTPUTS
+  mkdir -p $PATHTOBASELITMUS
   rm "$PATHTOBASELITMUS"/$LOGNAME
   for file in $PATHTOLITMUSTESTS/*
   do
@@ -79,6 +80,7 @@ else
     export MEMGLUELITMUSTEST=$PATHTOMEMGLUEOUTPUTS/$MEMGLUETEMPLATE"$1"
     echo $MEMGLUELITMUSTEST
     mkdir -p $PATHTOMEMGLUEOUTPUTS
+    mkdir -p $PATHTOBASELITMUS
     python3 $TRANSLATELITMUSFILE $PATHTOLITMUSTESTS/"$1".litmus $PATHTOMEMGLUEOUTPUTS models/$MEMGLUETEMPLATE.m
     if [ $? -ne 0 ]; then
       exit 1

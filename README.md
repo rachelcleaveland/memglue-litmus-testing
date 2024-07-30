@@ -12,10 +12,6 @@ cd src && make
 ```
 
 ## Repository structure
-* **logs**
-
-  Logs that are generated while running litmus tests are put here.
-
 * **models**
 
   Murphi model templates of Ordered MemGlue, Unordered MemGlue, and Unordered
