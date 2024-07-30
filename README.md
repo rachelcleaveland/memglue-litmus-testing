@@ -13,16 +13,24 @@ cd src && make
 
 ## Repository structure
 * logs
+
   Logs that are generated while running litmus tests are put here.
+
 * models
+
   Murphi model templates of Ordered MemGlue, Unordered MemGlue, and Unordered
   MemGlue with MSI clusters to be used during litmus testing.
+
 * tests
+
   Litmus tests in .litmus format, translated to Murphi format during litmus
   testing.
+
 * util
+
   Scripts for generating litmus tests in Murphi format, analyzing logs after
   testing to compare MemGlue to C11.
+
 
 The remaining scripts in the home directory are responsible for running
 litmus tests for each MemGlue model.
