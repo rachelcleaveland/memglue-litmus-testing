@@ -1,3 +1,5 @@
+# MemGlue Litmus Testing Instructions
+
 ## Software dependencies
 - Linux distribution (tested on Ubuntu 20.04)
 - Python 3.8 or higher
@@ -27,7 +29,7 @@ litmus tests for each MemGlue model.
 
 ## Running tests
 
-Running MemGlueO tests
+### Running MemGlueO tests
 
 Litmus tests with no fences
 ./runOrderedLitmusTest.sh all
@@ -38,7 +40,7 @@ Litmus tests with fences
 python3 util/compareLogs.py logs/all-ordered-fence.log
 
 
-Running MemGlueU tests
+### Running MemGlueU tests
 
 Litmus tests with no fences
 ./runUnorderedLitmusTest.sh all
@@ -49,7 +51,8 @@ Litmus tests with fences
 python3 util/compareLogs.py logs/all-unordered-fence.log
 
 
-Runing MemGlueU with MSI clusters
+### Runing MemGlueU with MSI clusters
+
 ./runMSITest.sh
 python3 util/compareMSILogs.py logs/all-msi.log <optional test type: corr mp, sb, wrc, iriw>
 
