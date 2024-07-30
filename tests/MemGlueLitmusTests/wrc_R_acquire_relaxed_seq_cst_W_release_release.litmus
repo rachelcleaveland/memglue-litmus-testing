@@ -1,0 +1,26 @@
+C wrc_R_acquire_relaxed_seq_cst_W_release_release
+
+{
+[x] = 0;
+[y] = 0;
+}
+
+// WRC with C/C++ atomics
+
+
+P0 (atomic_int* x) {
+  atomic_store_explicit(x, 1, memory_order_release);
+}
+
+P1 (atomic_int* x, atomic_int* y) {
+  int r2 = atomic_load_explicit(y, memory_order_acquire);
+  int r3 = atomic_load_explicit(x, memory_order_relaxed);
+}
+
+P2 (atomic_int* x, atomic_int* y) {
+  int r1 = atomic_load_explicit(x, memory_order_seq_cst);
+  atomic_store_explicit(y, 1, memory_order_release);
+}
+
+exists
+(2:r1 = 1 /\ 1:r2 = 1 /\ 1:r3 = 0)
