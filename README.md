@@ -32,27 +32,33 @@ litmus tests for each MemGlue model.
 ### Running MemGlueO tests
 
 Litmus tests with no fences
+```
 ./runOrderedLitmusTest.sh all
 python3 util/compareLogs.py logs/all-ordered.log
+```
 
 Litmus tests with fences
+```
 ./runOrderedFenceTest.sh all
 python3 util/compareLogs.py logs/all-ordered-fence.log
-
+```
 
 ### Running MemGlueU tests
 
 Litmus tests with no fences
+```
 ./runUnorderedLitmusTest.sh all
 python3 util/compareLogs.py logs/all-unordered.log
+```
 
 Litmus tests with fences
+```
 ./runUnorderedFenceTest.sh all
 python3 util/compareLogs.py logs/all-unordered-fence.log
-
+```
 
 ### Runing MemGlueU with MSI clusters
-
-./runMSITest.sh
+```
+./runMSITest.sh all
 python3 util/compareMSILogs.py logs/all-msi.log <optional test type: corr mp, sb, wrc, iriw>
-
+```
