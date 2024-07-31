@@ -64,5 +64,5 @@ python3 util/compareLogs.py logs/all-unordered-fence.log
 ### Runing MemGlueU with MSI clusters
 ```
 ./runMSITest.sh all
-python3 util/compareMSILogs.py logs/all-msi.log <optional test type: corr mp, sb, wrc, iriw>
+python3 util/compareMSILogs.py logs/all-msi.log <optional test type: mp, sb, wrc, iriw>
 ```
