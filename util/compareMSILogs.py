@@ -1,130 +1,47 @@
 import sys
 import os
+import pandas
 
 # Categories for percentage of strong cores
 # [0: 0, 1: 25, 2: 33, 3: 50, 4: 66, 5: 75, 6: 100]
 
-msi_results = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
-msi_categories = [([],[]),([],[]),([],[]),([],[]),([],[]),([],[]),([],[])]
+corr_categories = [([],[]),([],[]),([],[])]
+mp_categories = [([],[]),([],[]),([],[])]
+sb_categories = [([],[]),([],[]),([],[])]
+wrc_categories = [([],[]),([],[]),([],[]),([],[])]
+iriw_categories = [([],[]),([],[]),([],[]),([],[]),([],[])]
 
-def print_msi_results():
-    global msi_results
-    for i in range(7):
+def print_msi_results(test):
+    msi_categories = []
+    total = 0
+
+    if "mp" in test:
+        msi_categories = mp_categories
+        total = 2
+    elif "sb" in test:
+        msi_categories = sb_categories
+        total = 2
+    elif "corr" in test:
+        msi_categories = corr_categories
+        total = 2
+    elif "wrc" in test:
+        msi_categories = wrc_categories
+        total = 3
+    else:
+        msi_categories = iriw_categories
+        total = 4
+
+    for i in range(len(msi_categories)):
         o,u = msi_categories[i]
-        print("i =", i)
-        print(len(o), "/", len(o) + len(u))
+        print(str(i/total * 100) + "% Strong Cores")
+        print("  ", len(o), "/", len(o) + len(u), "allowable tests observable")
         if len(u) != 0:
-            print("(" + str(100 * len(o) / (len(o) + len(u))) + ")")
+            print("   (" + str(100 * len(o) / (len(o) + len(u))) + "%)")
         else:
             if len(o) == 0:
-                print("(0.0)")
+                print("   (0.0%)")
             else:
-                print("(100.0)")
-
-class TestBreakdown:
-
-    def __init__(self):
-        self.OO = set()
-        self.OU = set()
-        self.UO = set()
-        self.UU = set()
-
-    def addTo(self,category,test):
-        if category == "OO":
-            self.OO.add(test)
-        elif category == "OU":
-            self.OU.add(test)
-        elif category == "UO":
-            self.UO.add(test)
-        elif category == "UU":
-            self.UU.add(test)
-        else:
-            print("Can't add to category", category)
-            exit(1)
-
-    def print_breakdown(self):
-        print("  OO:", len(self.OO))
-        print("  OU:", len(self.OU))
-        print("  UO:", len(self.UO))
-        print("  UU:", len(self.UU))
-        if len(self.OO) + len(self.UO) != 0:
-            print("  Percentage:", 100 * len(self.OO) / (len(self.OO) + len(self.UO)))
-
-class TwoCore:
-    def __init__(self):
-        self.one_cluster = TestBreakdown()
-        self.two_cluster = TestBreakdown()
-
-    def add_to_msi_dict(self,num_cores_used,category,test):
-        if num_cores_used == 1:
-            self.one_cluster.addTo(category,test)
-        elif num_cores_used == 2:
-            self.two_cluster.addTo(category,test)
-        else:
-            print("Wrong number of cores provided")
-            exit(1)
-    
-    def print_breakdown(self):
-        print("Single cluster:")
-        self.one_cluster.print_breakdown()
-        print("Two clusters:")
-        self.two_cluster.print_breakdown()
-
-class ThreeCore:
-    def __init__(self):
-        self.one_cluster = TestBreakdown()
-        self.two_cluster = TestBreakdown()
-        self.three_cluster = TestBreakdown()
-
-    def add_to_msi_dict(self,num_cores_used,category,test):
-        if num_cores_used == 1:
-            self.one_cluster.addTo(category,test)
-        elif num_cores_used == 2:
-            self.two_cluster.addTo(category,test)
-        elif num_cores_used == 3:
-            self.three_cluster.addTo(category,test)
-        else:
-            print("Wrong number of cores provided")
-            exit(1)
-
-    def print_breakdown(self):
-        print("Single cluster:")
-        self.one_cluster.print_breakdown()
-        print("Two clusters:")
-        self.two_cluster.print_breakdown()
-        print("Three clusters:")
-        self.three_cluster.print_breakdown()
-
-class FourCore:
-    def __init__(self):
-        self.one_cluster = TestBreakdown()
-        self.two_cluster = TestBreakdown()
-        self.three_cluster = TestBreakdown()
-        self.four_cluster = TestBreakdown()
-
-    def add_to_msi_dict(self,num_cores_used,category,test):
-        if num_cores_used == 1:
-            self.one_cluster.addTo(category,test)
-        elif num_cores_used == 2:
-            self.two_cluster.addTo(category,test)
-        elif num_cores_used == 3:
-            self.three_cluster.addTo(category,test)
-        elif num_cores_used == 4:
-            self.four_cluster.addTo(category,test)
-        else:
-            print("Wrong number of cores provided")
-            exit(1)
-
-    def print_breakdown(self):
-        print("Single cluster:")
-        self.one_cluster.print_breakdown()
-        print("Two clusters:")
-        self.two_cluster.print_breakdown()
-        print("Three clusters:")
-        self.three_cluster.print_breakdown()
-        print("Four clusters:")
-        self.four_cluster.print_breakdown()
-
+                print("   (100.0%)")
 
 def printKeys(dictionary):
     for key in dictionary.keys():
@@ -295,61 +212,30 @@ def filter_test(test):
 
 
 def insert_to_msi_results(test,obs,strong_category):
-    global msi_results, msi_categories
-    category = 0
+    global corr_categories, mp_categories
+    global sb_categories, wrc_categories, iriw_categories
 
-    if "mp" in test or "sb" in test or "corr" in test:
-        if strong_category == 0:
-            category = 0
-        elif strong_category == 1:
-            category = 3
-        elif strong_category == 2:
-            category = 6
-        else:
-            print("Bad strong_category")
-            exit(1)
+    test_category = []
+    if "mp" in test:
+        test_category = mp_categories
+
+    elif "sb" in test:
+        test_category = sb_categories
+
+    elif "corr" in test:
+        test_category = corr_categories
 
     elif "wrc" in test:
-        if strong_category == 0:
-            category = 0
-        elif strong_category == 1:
-            category = 2
-        elif strong_category == 2:
-            category = 4
-        elif strong_category == 3:
-            category = 6
-        else:
-            print("Bad strong_category")
-            exit(1)   
+        test_category = wrc_categories
 
     elif "iriw" in test:
-        if strong_category == 0:
-            category = 0
-        elif strong_category == 1:
-            category = 1
-        elif strong_category == 2:
-            category = 3
-        elif strong_category == 3:
-            category = 5
-        elif strong_category == 4:
-            category = 6
-        else:
-            print("Bad strong_category")
-            exit(1)
+        test_category = iriw_categories
 
     else:
         print("Bad test")
         exit(1)
 
-    if category == 0 and not obs:
-        print(test)
-
-    #a,b = msi_results[category]
-    #b = b + 1 if not obs else b
-    #a = a + 1 if obs else a
-
-    #msi_results[category] = a,b 
-    o,u = msi_categories[category]
+    o,u = test_category[strong_category]
     if obs:
         for t in u:
             if t == test:
@@ -358,7 +244,16 @@ def insert_to_msi_results(test,obs,strong_category):
     else:
         if not test in u:
             u = u + [test]
-    msi_categories[category] = (o,u)
+    if "mp" in test:
+        mp_categories[strong_category] = (o,u)
+    elif "sb" in test:
+        sb_categories[strong_category] = (o,u)
+    elif "corr" in test:
+        corr_categories[strong_category] = (o,u)
+    elif "wrc" in test:
+        wrc_categories[strong_category] = (o,u)
+    else:
+        iriw_categories[strong_category] = (o,u)
 
 
 def coreListToString(cores):
@@ -384,7 +279,6 @@ def rewriteTestName(test):
         return base_test + "__C1_" + coreListToString(C1) + "_C2_" + coreListToString(C2)
 
     if "wrc" in test:
-        print(test)
         C1 = test.split("C1_")[1].split("_C2")[0].split("_")
         C2 = test.split("C2_")[1].split("_C3")[0].split("_")
         C3 = test.split("C3_")[1].split("_")
@@ -444,32 +338,11 @@ def compare(file1, file2, testType):
     quadUO = {}
     quadUU = {}
 
-    mp = TwoCore()
-    sb = TwoCore()
-    corr = TwoCore()
-    wrc = ThreeCore()
-    iriw = FourCore()
-
     def single_test_filter(test_name):
         if testType == None:
             return True 
         else:
             return (testType in test_name)
-
-    def chooseTest(test):
-        if "mp" in test:
-            return mp
-        elif "sb" in test:
-            return sb
-        elif "corr" in test:
-            return corr
-        elif "wrc" in test:
-            return wrc
-        elif "iriw" in test:
-            return iriw
-        else:
-            print("Invalid test name")
-            exit(1)
 
     for line in f2.readlines():
         if "OBSERVABLE" in line:
@@ -495,7 +368,6 @@ def compare(file1, file2, testType):
             strong_category = filter_test(test)
 
             if strong_category == None:
-                print("ERROR: filtering test??")
                 continue
 
             num_cores_used = categorize_core_distro(test,core_distro)
@@ -503,72 +375,51 @@ def compare(file1, file2, testType):
             if herdResult != None:
                 if "OUTCOME OBSERVED" == memResult and "OBSERVABLE" == herdResult:
                     quadOO.update({test:result})
-                    chooseTest(test).add_to_msi_dict(num_cores_used,"OO",test)
                     if not "corr" in test and single_test_filter(test): 
                         insert_to_msi_results(test,True,strong_category)
 
                 if "OUTCOME OBSERVED" == memResult and "UNOBSERVABLE" == herdResult:
                     quadOU.update({test:result})    
-                    chooseTest(test).add_to_msi_dict(num_cores_used,"OU",test)
                     if not "corr" in test and single_test_filter(test):
                         insert_to_msi_results(test,True,strong_category)
 
                 if "UNOBSERVABLE" == memResult and "OBSERVABLE" == herdResult:
                     quadUO.update({test:result})       
-                    chooseTest(test).add_to_msi_dict(num_cores_used,"UO",test)
                     if not "corr" in test and single_test_filter(test):
                         insert_to_msi_results(test,False,strong_category)
 
                 if "UNOBSERVABLE" == memResult and "UNOBSERVABLE" == herdResult:
                     quadUU.update({test:result})
-                    chooseTest(test).add_to_msi_dict(num_cores_used,"UU",test)
                     if not "corr" in test and single_test_filter(test):
                         insert_to_msi_results(test,False,strong_category)
 
             else:
                 print("ERROR test not found")
 
-    #print("OO log:")
-    #printKeys(quadOO)
-    #print("OU log:")
-    #printKeys(quadOU)
-    #print("UO log:")
-    #printKeys(quadUO)
-    #print("UU log:")
-    #printKeys(quadUU)
-    print("OO:", len(quadOO.keys()))
-    print("OU:", len(quadOU.keys()))
-    print("UO:", len(quadUO.keys()))
-    print("UU:", len(quadUU.keys()))
+    print("\nSummary:")
+    data = {
+        "Allowed in C11": [len(quadOO.keys()), len(quadUO.keys())],
+        "Disallowed in C11": [len(quadOU.keys()), len(quadUU.keys())],
+    }
 
-    print("MP Tests:")
-    mp.print_breakdown()
+    df = pandas.DataFrame(data,index=["Observable in MemGlue", "Unobservable in MemGlue"])
+    print(df)
 
-    print("\nSB Tests:")
-    sb.print_breakdown()
+    if testType == None or "mp" in testType:
+        print("\nMP Results:")
+        print_msi_results("mp")
 
-    print("\nCoRR Tests:")
-    corr.print_breakdown()
+    if testType == None or "sb" in testType:
+        print("\nSB Results:")
+        print_msi_results("sb")
+        
+    if testType == None or "wrc" in testType:
+        print("\nWRC Results:")
+        print_msi_results("wrc")
 
-    print("\nWRC Tests:")
-    wrc.print_breakdown()
-
-    print("\nIRIW Tests:")
-    iriw.print_breakdown()
-
-    for i in range(7): 
-        print("Category", i)
-        o,u = msi_categories[i]
-        print("Observable:")
-        for o_test in o:
-            print(o_test)
-        print("Unobservable")
-        for u_test in u:
-            print(u_test)
-        print("\n")
-
-    print("\nmsi_results:")
-    print_msi_results()
+    if testType == None or "iriw" in testType:
+        print("\nIRIW Results:")
+        print_msi_results("iriw")
 
     f1.close()
     f2.close()
@@ -580,5 +431,5 @@ if __name__ == '__main__':
     log1 = sys.argv[1]
     current_directory = os.path.dirname(os.path.realpath(__file__))
     herdLog = current_directory + "/C11-MCM-tests.log"
-    testType = None if len(sys.argv) != 4 else sys.argv[3]
+    testType = None if len(sys.argv) != 3 else sys.argv[2]
     compare(log1,herdLog,testType)

@@ -1,5 +1,6 @@
 import sys
 import os
+import pandas
 
 def printKeys(dictionary):
     for key in dictionary.keys():
@@ -40,18 +41,23 @@ def compare(file1, file2):
                     quadUU.update({test:result})
             else:
                 print("ERROR test not found")
-    print("OO log:")
+    print("Tests observable in MemGlue and allowed in C11:")
     printKeys(quadOO)
-    print("OU log:")
+    print("Tests observable in MemGlue but disallowed by C11:")
     printKeys(quadOU)
-    print("UO log:")
+    print("Tests unobservable in MemGlue but allowed by C11:")
     printKeys(quadUO)
-    print("UU log:")
+    print("Tests unobservable in MemGlue and disallowed by C11:")
     printKeys(quadUU)
-    print("OO:", len(quadOO.keys()))
-    print("OU:", len(quadOU.keys()))
-    print("UO:", len(quadUO.keys()))
-    print("UU:", len(quadUU.keys()))
+
+    print("\nSummary:")
+    data = {
+        "Allowed in C11": [len(quadOO.keys()), len(quadUO.keys())],
+        "Disallowed in C11": [len(quadOU.keys()), len(quadUU.keys())],
+    }
+
+    df = pandas.DataFrame(data,index=["Observable in MemGlue", "Unobservable in MemGlue"])
+    print(df)
 
     f1.close()
     f2.close()
