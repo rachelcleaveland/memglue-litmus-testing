@@ -15,7 +15,8 @@ cd src && make
 * **models**
 
   Murphi model templates of Ordered MemGlue, Unordered MemGlue, and Unordered
-  MemGlue with MSI clusters to be used during litmus testing.
+  MemGlue with MSI clusters to be used during litmus testing. Also contains
+  the RC11 cat model used in this work.
 
 * **tests**
 

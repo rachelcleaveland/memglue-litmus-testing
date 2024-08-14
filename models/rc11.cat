@@ -1,0 +1,44 @@
+
+"RC11" 
+(* withinit *)
+
+let sb = po | I * (M \ I)
+
+(* hb *)
+let rs = [W] ; (sb & loc)? ; [W & ~NA] ; rf*
+let sw = [REL | ACQ_REL | SC] ; ([F] ; sb)? ; rs ; rf ; [R & ~NA] ; (sb ; [F])? ; [ACQ | ACQ_REL | SC]
+let hb = (sb | sw)+
+
+(* Generate mo's *)
+include "cross.cat"
+with mo from generate_orders(W,co0)
+
+(* coherence *)      
+let fr = (rf^-1 ; mo) \ id
+let eco = rf | mo | fr | mo ; rf | fr ; rf
+irreflexive (hb ; eco) as coh
+
+(* atomicity *)
+irreflexive eco as atomic1
+irreflexive (fr ; mo) as atomic2
+
+(* sc *)
+let fhb = [F & SC] ; hb?
+let hbf = hb? ; [F & SC] 
+let sb_neq_loc = sb \ loc
+let scb =  sb | sb_neq_loc ; hb ; sb_neq_loc | hb & loc | mo | fr
+let psc_base =  ([SC] | fhb) ; scb ; ([SC] | hbf)
+let psc_f =  [F & SC] ; (hb | hb; eco; hb) ; [F & SC]
+let psc =  psc_base | psc_f
+acyclic psc as sc
+
+(* sb_rf *)
+acyclic (sb | rf) as sb_rf
+
+(* data_races *)
+let conflict = (((W * _) | (_ * W)) & loc) 
+let race = ext & (conflict \ hb \ (hb^-1) \ (A * A))
+
+undefined_unless empty race as racy 
+
+
