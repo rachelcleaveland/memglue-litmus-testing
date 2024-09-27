@@ -3,7 +3,7 @@
 ## Software dependencies
 - Linux distribution (tested on Ubuntu 20.04)
 - Python 3.8 or higher
-- CMurphi 5.4.9.1 -- available at https://github.com/Errare-humanum-est/CMurphi-
+- CMurphi 5.4.9.1 -- available at https://github.com/Errare-humanum-est/CMurphi
 
 To setup CMurphi, clone the directory into the parent directory. From 
 CMurphi's parent directory, run:
