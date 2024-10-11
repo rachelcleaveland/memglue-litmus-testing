@@ -34,6 +34,21 @@ litmus tests for each MemGlue model.
 
 ## Running tests
 
+Each script will compile each test in the suite and then run it. The tests
+with MSI clusters will additionally first translate each tests (by producing
+one test for each distribution of threads to clusters) and filter out the
+tests that are not relevant. The outcomes will be of the form:
+```
+Litmus test corr_R_acquire_seq_cst_W_relaxed_release: UNOBSERVABLE
+```
+Each outcome is either `OUTCOME OBSERVED` or `UNOBSERVABLE`. If 
+`unexpected outcome` is printed, check that the test compiled properly.
+
+`compareLogs.py` will categorize each test based on its observability in
+MemGlue compared to C11. `compareMSILogs.py` will separate tests by base type
+(MP, SB, WRC, IRIW) and will distribute them based on the percentage of their
+threads that are "strong". 
+
 ### Running MemGlueO tests
 
 Litmus tests with no fences

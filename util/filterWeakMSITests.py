@@ -432,6 +432,10 @@ def rewriteTestName(test):
 
 def compare(file1):
     old_test = file1.split("tests/MemGlueMSILitmusTests/MemGlueMSITemplate")[1].split(".m")[0]
+
+    if "corr" in old_test:
+        os.remove(file1)
+        return
             
     test = rewriteTestName(old_test)
             
