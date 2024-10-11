@@ -35,9 +35,10 @@ litmus tests for each MemGlue model.
 ## Running tests
 
 Each script will compile each test in the suite and then run it. The tests
-with MSI clusters will additionally first translate each tests (by producing
+with MSI clusters will additionally first translate each test (by producing
 one test for each distribution of threads to clusters) and filter out the
-tests that are not relevant. The outcomes will be of the form:
+tests that are not relevant. The outcomes will be added to the `logs` directory
+and will be of the form:
 ```
 Litmus test corr_R_acquire_seq_cst_W_relaxed_release: UNOBSERVABLE
 ```
