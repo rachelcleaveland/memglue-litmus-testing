@@ -326,12 +326,9 @@ var
 
     case FRESP:
       Assert(Shims[msg.dst].fencePending = true);
+      Assert(Shims[msg.dst].pendingWSC = false);
       Shims[msg.dst].fencePending := false;
-      if (!Shims[msg.dst].pendingWSC) then
-        PopInstr(msg.dst); -- CHECK
-      else
-        Shims[msg.dst].pendingWSC := false;
-      endif;
+      PopInstr(msg.dst);
     else
       error "Shim received invalid message type!";
     endswitch;
