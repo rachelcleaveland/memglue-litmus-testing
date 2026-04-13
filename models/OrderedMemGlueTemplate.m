@@ -303,7 +303,7 @@ var
       shimElem := Shims[msg.dst].state[msg.addr];
 
       if (shimElem.syncBit) then
-        ShimWriteCache(msg.dst,Valid,shimElem.data,msg.ts+shimElem.ts-1,msg.addr);
+        ShimWriteCache(msg.dst,Valid,shimElem.data,msg.ts,msg.addr);
         Shims[msg.dst].state[msg.addr].syncBit := false;
       endif;
       if Shims[msg.dst].pendingWSC then 
@@ -572,6 +572,9 @@ var
       & !Shims[shim].fencePending
       & !Shims[shim].pendingWSC
       & !Shims[shim].queue.Queue[Shims[shim].queue.QueueInd].pend
+      & !(Shims[shim].queue.Queue[Shims[shim].queue.QueueInd].access != fence
+          & Shims[shim].state[Shims[shim].queue.Queue[Shims[shim].queue.QueueInd].addr].syncBit
+          & Shims[shim].state[Shims[shim].queue.Queue[Shims[shim].queue.QueueInd].addr].state = Valid)
     ==> 
       IssueInstr(shim);
     endrule;
