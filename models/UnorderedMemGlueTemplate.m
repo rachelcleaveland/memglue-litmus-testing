@@ -589,7 +589,7 @@ var
         Shims[msg.dst].state[msg.addr].syncBit := false;
       endif;
 
-      if (Shims[msg.dst].pendingWSC) then
+      if Shims[msg.dst].pendingWSC & msg.stren = SC then 
         Shims[msg.dst].pendingWSC := false;
       endif;
 
