@@ -672,10 +672,10 @@ var
     for i := 0 to qInd - 1 do
       instr := Shims[shim].queue.Queue[i];
       if instr.pend & instr.addr = addr then
-        return false;
+        return true;
       endif;
     endfor;
-    return true;
+    return false;
   End;
 
   Function AcceptRRESPEarly(shim: ShimId; msg: Message): boolean;
