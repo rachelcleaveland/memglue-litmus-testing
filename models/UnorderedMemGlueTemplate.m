@@ -607,7 +607,7 @@ var
         ShimWriteCache(msg.dst,Valid,data,ts+Shims[msg.dst].state[msg.addr].localWriteCntr,addr);
         Shims[msg.dst].state[msg.addr].syncBit := false;        
       else
-        if (shimElem.ts <= msg.ts) then
+        if (shimElem.ts <= msg.ts & inOrder) then
           ShimWriteCache(msg.dst,Valid,data,ts,addr);
         endif;
       endif;
@@ -618,7 +618,7 @@ var
         AddSeenIdShimBuf(msg.dst,msg.writeId);
       endif;
       --UpdateVal(msg.dst, Shims[msg.dst].state[msg.addr].data, msg.qInd);
-      UpdateVal(msg.dst, data, msg.qInd);
+      UpdateVal(msg.dst, msg.data, msg.qInd);
 
     case FREQ:
       Shims[msg.dst].fenceCnt := Shims[msg.dst].fenceCnt + 1;
