@@ -399,6 +399,18 @@ var
   End;
 
 
+  -- Returns true iff some buffered message of shim s was applied early (status 1) and has not
+  -- yet been reached in order.
+  Function HasEarlyEntry(s: ShimId): boolean;
+  Begin
+    for i := 0 to Shims[s].bufCnt-1 do
+      if Shims[s].buf[i].status = 1 then
+        return true;
+      endif;
+    endfor;
+    return false;
+  End;
+
   Procedure ShimPushBuf(dst:Node; msg:Message; status:0..1);
   var bufEntry: BufEntry;
   Begin
@@ -1284,6 +1296,15 @@ var
       if Shims[shim].state[instr.addr].rfBuf > 0 then
         return true;
 
+      endif;
+    endif;
+
+    -- An SC load waits until every early-accepted message has been cleared from the buffer, 
+    -- to ensure that all SC writes have propagated to the shim cache. Relevant when 
+    -- an early-accepted RRESP places a W SC into the shim cache that hasn't been accepted yet. 
+    if instr.access = load & instr.stren = SC then
+      if HasEarlyEntry(shim) then
+        return true;
       endif;
     endif;
 
